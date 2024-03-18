@@ -1,0 +1,160 @@
+// Variables
+
+$absolute-black: #000;
+$absolute-white: #fff;
+
+$grey-clr-100: #eeeeee;
+$grey-clr-200: #c4c4c4;
+$grey-clr-300: #a0a0a0;
+$grey-clr-400: #686868;
+
+
+$dark-clr-100: #404040;
+$dark-clr-200: #313131;
+$dark-clr-300: #212121;
+$dark-clr-400: #101010;
+
+$red-clr-100: #ffa8a8;
+$red-clr-200: #f67979;
+$red-clr-300: #fa4b4b;
+$red-clr-400: #f00000;
+$red-clr-500: #cd0000;
+$red-clr-600: #b10202;
+
+// Feeds SCSS
+
+.posts {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 10%;
+
+    .post-writer {
+        display: flex;
+        flex-direction: column;
+
+        padding: 1rem;
+        border-radius: 12px;
+        background-color: $grey-clr-100;
+
+        .top {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .top .user {
+            width: 50px;
+            height: 50px;
+            border: 1px solid transparent;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem;
+            background-color: $grey-clr-200;
+            border-radius: 50%;
+        }
+
+        .top input {
+            flex: 1;
+            outline: none;
+            border: 1px solid $grey-clr-300;
+            border-radius: 100px;
+            padding: 0.875rem 2rem;
+            background: $grey-clr-100;
+        }
+
+        .bottom {
+            display: flex;
+            gap: 1rem;
+            justify-content: end;
+        }
+
+        .bottom .btn {
+            margin-top: 1.5rem;
+            outline: none;
+            border: none;
+            border-radius: 100px;
+
+            padding: 0.875em 2rem;
+            font-weight: 600;
+            color: $absolute-white;
+            background: $red-clr-500;
+            cursor: pointer;
+
+            transition: background .3s ease-in;
+        }
+
+        .bottom .btn:hover {
+            background: $red-clr-600;
+        }
+    }
+}
+
+.post {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+
+    padding: 1rem;
+    border-radius: 12px;
+    background-color: $grey-clr-100;
+
+    .post-header {
+        display: flex;
+        gap: 0.5rem;
+
+        .user {
+            width: 50px;
+            height: 50px;
+            border: 1px solid transparent;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem;
+            background-color: $grey-clr-200;
+            border-radius: 50%;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .user-details .name {
+            font-weight: 900;
+        }
+
+        .user-details .username {
+            color: $dark-clr-100;
+        }
+    }
+
+    .post-body {
+
+    }
+
+    .post-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        color: $dark-clr-100;
+
+        span {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        span > svg {
+            cursor: pointer;
+        }
+    }
+}

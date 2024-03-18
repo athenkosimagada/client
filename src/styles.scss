@@ -1,1 +1,74 @@
-/* You can add global styles to this file, and also import other style files */
+// Imports 
+
+@import 'ngx-toastr/toastr';
+
+// Variables
+
+$absolute-black: #000;
+$absolute-white: #fff;
+
+$grey-clr-100: #eeeeee;
+$grey-clr-200: #c4c4c4;
+$grey-clr-300: #a0a0a0;
+$grey-clr-400: #686868;
+$grey-clr-500: #404040;
+$grey-clr-600: #191919;
+
+$red-clr-100: #ffa8a8;
+$red-clr-200: #f67979;
+$red-clr-300: #fa4b4b;
+$red-clr-400: #f00000;
+$red-clr-500: #cd0000;
+$red-clr-600: #b10202;
+
+
+// Resets
+
+*,*::after,*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: unset;
+}
+
+li {
+    list-style: none;
+}
+
+// Utilities
+
+.container {
+    max-width: 1220px;
+    margin: 0 auto;
+}
+
+.row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-danger {
+    color: $red-clr-400;
+}
+
+.link {
+    font-weight: 600;
+    color: $red-clr-400;
+    transition: color .3s ease-in;
+    &:hover {
+        color: $red-clr-600;
+    }
+}

@@ -1,0 +1,109 @@
+// Variables
+
+$absolute-black: #000;
+$absolute-white: #fff;
+
+$grey-clr-100: #eeeeee;
+$grey-clr-200: #c4c4c4;
+$grey-clr-300: #a0a0a0;
+$grey-clr-400: #686868;
+
+
+$dark-clr-100: #404040;
+$dark-clr-200: #313131;
+$dark-clr-300: #212121;
+$dark-clr-400: #101010;
+
+$red-clr-100: #ffa8a8;
+$red-clr-200: #f67979;
+$red-clr-300: #fa4b4b;
+$red-clr-400: #f00000;
+$red-clr-500: #cd0000;
+$red-clr-600: #b10202;
+
+// Navbar SCSS
+
+.navbar {
+    background: $dark-clr-300;
+    color: $absolute-white;
+
+    position: sticky;
+    top: 0;
+}
+
+.nav {
+    padding: 2rem 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+
+    .logo {
+        color: $red-clr-500;
+        font-size: 2rem;
+        font-weight: 700;
+        font-family: cursive;
+    }
+    
+    .menu-links {
+        display: flex;
+        align-items: baseline;
+        gap: 1.75rem;
+
+        .menu-link {
+            font-weight: 600;
+            transition: color .3s ease-in;
+        }
+
+        .menu-link:not(.menu-link.profile):hover {
+            color: $red-clr-500;
+        }
+
+        .menu-link.profile {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            border: 1px solid transparent;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem;
+            background-color: $grey-clr-400;
+            border-radius: 50%;
+            cursor: pointer;
+
+            transition: border .3s ease-in, color .3s ease-in;
+        }
+
+        .menu-link.profile:hover {
+            border: 1px solid $red-clr-500;
+        }
+
+        .menu-link.profile span {
+            font-weight: 700;
+        }
+
+        .dropdown {
+            display: none;
+        }
+
+        .dropdown.active {
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background-color: $dark-clr-300;
+
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0px 1px 3px rgba(182, 182, 182, 0.3);
+        }
+
+        .dropdown li {
+            width: max-content;
+            cursor: pointer;
+        }
+    }
+}

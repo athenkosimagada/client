@@ -1,0 +1,125 @@
+// Variables
+
+$absolute-black: #000;
+$absolute-white: #fff;
+
+$grey-clr-100: #eeeeee;
+$grey-clr-200: #c4c4c4;
+$grey-clr-300: #a0a0a0;
+$grey-clr-400: #686868;
+$grey-clr-500: #404040;
+$grey-clr-600: #191919;
+
+$red-clr-100: #ffa8a8;
+$red-clr-200: #f67979;
+$red-clr-300: #fa4b4b;
+$red-clr-400: #f00000;
+$red-clr-500: #cd0000;
+$red-clr-600: #b10202;
+
+// Login SCSS
+
+.login {
+    display: flex;
+
+    &_image{
+        position: relative;
+
+        display: grid;
+        place-content: center;
+
+        height: 100vh;
+        flex: 0.7;
+        padding: 1.25rem;
+        background-image: url('../../../assets/login/login-page.jpeg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+
+        > div {
+            position: relative;
+            z-index: 1;
+            
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        > div p:first-child {
+            color: $absolute-white;
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        > div p:last-child {
+            color: $grey-clr-200;
+        }
+    }
+
+    &_image::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    &_content{
+        flex: 0.3;
+        padding: 3.125rem;
+        min-width: 450px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        span {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            margin-bottom: 2.25rem;
+        }
+        
+        .input {
+            display: flex;
+            flex-direction: column;
+            gap: 0.875rem;
+            margin-top: 1rem;
+        }
+
+        .input input {
+            outline: none;
+            border: none;
+            border-radius: 4px;
+            padding: 0.875rem;
+            background: $grey-clr-100;
+        }
+
+        .btn {
+            margin-top: 1.5rem;
+            outline: none;
+            border: none;
+            border-radius: 4px;
+
+            padding: 0.875em;
+            font-weight: 600;
+            color: $absolute-white;
+            background: $red-clr-500;
+            cursor: pointer;
+
+            transition: background .3s ease-in;
+        }
+
+        .btn:hover {
+            background: $red-clr-600;
+        }
+
+        .gap {
+            gap: 0.875rem;
+        }
+    }
+    
+}

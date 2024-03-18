@@ -1,0 +1,37 @@
+<div class="navbar">
+  <div class="container">
+    <div class="nav">
+      <div class="logo">Chatbook</div>
+      <div class="menu">
+        <ul class="menu-links">
+          <li><a class="menu-link" [routerLink]="['/cb/feed']">Feeds</a></li>
+          <li>
+            <a class="menu-link" [routerLink]="['/cb/friend-requests']" href=""
+              >Friend Requests</a
+            >
+          </li>
+          <li>
+            <a class="menu-link" [routerLink]="['/cb/messages']">Messages</a>
+          </li>
+          <li>
+            <span (click)="dropdown()" class="menu-link profile">
+              <span>{{ getUserDetails()?.fullName[0] }}</span>
+              <ul class="" [classList]="isActive ? 'dropdown active' : 'dropdown'">
+                <li>
+                  <a class="menu-link" [routerLink]="['profile', getUserDetails()?.userName]">
+                    View Profile
+                </a>
+                </li>
+                <li>
+                  <a class="menu-link" (click)="logout()">
+                    Logout
+                </a>
+                </li>
+              </ul>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="login">
+  <div class="login_image">
+    <div>
+      <p>Wellcome!</p>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rem aperiam
+        velit magni maxime illo incidunt, reiciendis et quo rerum repellat quod
+        est accusamus soluta quaerat totam laudantium aut vitae deleniti.
+      </p>
+    </div>
+  </div>
+  <div class="login_content">
+    <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
+      <div class="row">
+        <span class="text-center">LOGO</span>
+        <h3 class="text-center">Sign in now</h3>
+      </div>
+      <div class="input">
+        <div class="row">
+          <input formControlName="userName" placeholder="Enter Email" />
+
+          <!-- Errors -->
+          @if (form.controls["userName"].errors &&
+          form.controls["userName"].errors["email"] &&
+          form.controls["userName"].touched) {
+          <span class="text-danger"> Email is invalid! </span>
+          } @if (form.controls["userName"].errors &&
+          form.controls["userName"].errors["required"] &&
+          form.controls["userName"].touched) {
+          <span class="text-danger"> Email is required </span>
+          }
+        </div>
+        <div class="row">
+          <input
+            type="password"
+            formControlName="password"
+            placeholder="Enter Password"
+          />
+
+          <!-- Errors -->
+          @if (form.controls["password"].errors &&
+          form.controls["password"].errors["required"] &&
+          form.controls["password"].touched) {
+          <span class="text-danger"> Password is required </span>
+          }
+        </div>
+      </div>
+
+      <div class="row gap">
+        <button class="btn" type="submit">Login</button>
+        <p class="text-center">
+          Dont have an account?
+          <a class="link" routerLink="/account/register">Sign up now</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>
