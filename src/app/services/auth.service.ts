@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
@@ -16,6 +16,9 @@ import { ApplicationUser } from '../models/user';
 export class AuthService {
   apiUrl:string = environment.AUTH_API_URL;
   JWT_TOKEN:string = "JWT_TOKEN";
+
+  private usersSubject = new BehaviorSubject<ApplicationUser[]>([]);
+  users$ = this.usersSubject.asObservable();
 
   constructor(
     private http:HttpClient,
@@ -60,6 +63,21 @@ export class AuthService {
         return response;
       })
     )
+  }
+
+  getChatUsers(userId: string):Observable<ApplicationUser[]>{
+    return this.http.get<ApiResponse<ApplicationUser[]>>(`${this.apiUrl}/GetChatUsers/${userId}`)
+    .pipe(
+      map((response) => {
+        console.log(response.result);
+        this.usersSubject.next(response.result);
+        return response.result || [];
+      })
+    )
+  }
+
+  updateChatUsers(users: ApplicationUser[]): void {
+    this.usersSubject.next(users);
   }
 
   getUserById(userId: string):Observable<ApplicationUser> {

@@ -24,15 +24,12 @@ export class LoginComponent implements OnInit {
     private fb : FormBuilder,
     private toastr: ToastrService,
     private authService: AuthService,
-    private signalrService: SignalrService,
     private router : Router
   ){
 
   }
 
   ngOnInit(): void {
-    this.signalrService.startConnection();
-
     this.form =  this.fb.group({
       userName:new FormControl(null,  [
         Validators.required,
@@ -44,6 +41,7 @@ export class LoginComponent implements OnInit {
       ])
     });
   }
+
 
   onFormSubmit(){
     if(this.form.invalid) {

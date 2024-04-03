@@ -1,5 +1,5 @@
 export interface Message{
-    messageId?:string,
+    messageId:string,
     fromUserId:string,
     toUserId:string,
     content:string,

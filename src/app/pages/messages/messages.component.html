@@ -1,1 +1,54 @@
-<p>messages works!</p>
+<div class="container">
+  <div class="messages-page">
+    <div class="user-room">
+      <h3>Messages</h3>
+      <div class="chat-users">
+        @for (user of users; track user.id) { @if (user.id !=
+        getUserDetails()?.id && user.latestMessage != null) {
+        <div [routerLink]="['/cb/messages',user.id]" class="chat-user">
+          <div class="user">
+            {{ user.fullName[0] }}
+          </div>
+          <div class="user-details">
+            <span class="name">{{ user.fullName }}</span>
+            <span class="message">{{ user.latestMessage.content }}</span>
+          </div>
+        </div>
+        } }
+      </div>
+    </div>
+    <div class="chat-room">
+      @if (messages.length > 0) {
+      <div class="chat">
+        <div class="chat-header">
+          <h2>To: {{ selectedUser }}</h2>
+        </div>
+        <div class="chat-body" #chatBody>
+          @for (message of messages; track message.messageId) { @if
+          (message.fromUserId == getUserDetails()?.id) {
+          <div class="message-right">
+            <p>{{ message.content }}</p>
+            <p>{{ message.sentOn | date : "short" }}</p>
+          </div>
+          } @else {
+          <div class="message-left">
+            <p>{{ message.content }}</p>
+            <p>{{ message.sentOn | date : "short" }}</p>
+          </div>
+          } }
+        </div>
+        <div class="chat-footer">
+          <form [formGroup]="form" (ngSubmit)="sendMessage()">
+            <input formControlName="content" type="text" placeholder="Type a message here..." />
+            <button type="submit" class="btn">Post</button>
+          </form>
+        </div>
+      </div>
+      } @else {
+      <div class="start-chat">
+        Start new chat or select a user to chat with.
+      </div>
+      }
+    </div>
+  </div>
+</div>

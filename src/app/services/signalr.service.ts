@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
 import { Message } from '../models/message';
+import { MessageRequest } from '../models/message-request';
+import { AuthService } from './auth.service';
+import { MessageService } from './message.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -10,6 +13,9 @@ export class SignalrService {
   SIGNALR_URL:string = environment.signalR_URL;
 
   constructor(
+    private authService : AuthService,
+    private messageService : MessageService,
+    private authServce : AuthService
   ) { }
 
   startConnection():void {
@@ -23,39 +29,69 @@ export class SignalrService {
     .start()
     .then(() => {
       console.log('Hub Connection Started');
-      this.connectionCreated();
+      this.onLoggedIn();
       this.recieveMessage();
     })
     .catch(err => {
       console.log('Error while starting connection: ' + err)
     })
+    .finally(() => {
+      this.onLogin();
+    })
   }
+  getUserDetails() {
+    return this.authService.getUserDetails();
+  }
+  
 
-  sendMessage(message:Message):void {
-    console.log("Send Message Called");
-
-    this.connection.invoke("SendMessage",message.messageId)
+  async onLogin(){
+    const userDetails = await this.authService.getUserDetails();
+    this.connection.invoke("OnLogin", userDetails?.id)
     .catch(err => {
       console.log(err);
     });
   }
+
+  onLoggedIn():void {
+    this.connection.on("OnLoggedIn",(signalrConnectionId) => {
+      console.log(signalrConnectionId);
+    });
+  }
+
+  
+  sendMessage(message: Message): void {
+    console.log("Send Message Called");
+  
+    if (this.connection.state 
+      !== signalR.HubConnectionState.Connected) {
+      this.startConnection()
+    }
+
+    this.messageService.addMessage(message);
+      this.connection.invoke("SendMessage", message, message.toUserId).then(() => {
+        console.log("Message sent");
+      })
+      .catch(err => console.log(err));
+  }  
 
   recieveMessage():void {
-    this.connection.on("RecieveMessage",(recieverId) => {
-      console.log(recieverId);
-    });
-  }
+    this.connection.on("RecieveMessage",(message : Message) => {
+      console.log(`Message received \n Message: ${message}`);
+      this.messageService.receiveMessage(message);
 
-  createConnection(userId:string){
-    this.connection.invoke("CreateConnection", userId)
-    .catch(err => {
-      console.log(err);
-    });
-  }
-
-  connectionCreated():void {
-    this.connection.on("ConnectionCreated",(connection) => {
-      console.log(connection);
+        this.authService.users$.subscribe(users => {
+        const updatedUsers = users.map(user => {
+          if (user.id === message.toUserId) {
+            return {
+              ...user,
+              latestMessage: message
+            };
+          } else {
+            return user;
+          }
+        });
+        this.authService.updateChatUsers(updatedUsers);
+      });
     });
   }
 }

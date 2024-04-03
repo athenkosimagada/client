@@ -43,6 +43,11 @@ export const routes: Routes = [
                 canActivate: [authGuard]
             },
             {
+                path: 'messages/:id',
+                component: MessagesComponent,
+                canActivate: [authGuard]
+            },
+            {
                 path: 'profile/:username',
                 component: ProfileComponent,
                 canActivate: [authGuard]
