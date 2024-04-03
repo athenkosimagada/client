@@ -2,6 +2,7 @@
   <div class="messages-page">
     <div class="user-room">
       <h3>Messages</h3>
+      <input class="search" type="search" placeholder="Search for user" />
       <div class="chat-users">
         @for (user of users; track user.id) { @if (user.id !=
         getUserDetails()?.id && user.latestMessage != null) {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, take } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { ApiResponse } from '../models/api-response';
 import { LoginResponse } from '../models/login-response';
 import { RegisterRequest } from '../models/register-request';
 import { ApplicationUser } from '../models/user';
+import { Message } from '../models/message';
 
 @Injectable({
   providedIn: 'root'
@@ -76,8 +77,19 @@ export class AuthService {
     )
   }
 
-  updateChatUsers(users: ApplicationUser[]): void {
-    this.usersSubject.next(users);
+  updateChatUsers(message: Message): void {
+    this.users$.pipe(take(1)).subscribe(users => {
+      const updatedUsers = users.map(user => {
+        if (user.id === message.fromUserId || user.id == message.toUserId) {
+          return {
+            ...user,
+            latestMessage: message
+          };
+        }
+        return user;
+      });
+      this.usersSubject.next(updatedUsers);
+    });
   }
 
   getUserById(userId: string):Observable<ApplicationUser> {

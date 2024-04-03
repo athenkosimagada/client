@@ -78,20 +78,7 @@ export class SignalrService {
     this.connection.on("RecieveMessage",(message : Message) => {
       console.log(`Message received \n Message: ${message}`);
       this.messageService.receiveMessage(message);
-
-        this.authService.users$.subscribe(users => {
-        const updatedUsers = users.map(user => {
-          if (user.id === message.toUserId) {
-            return {
-              ...user,
-              latestMessage: message
-            };
-          } else {
-            return user;
-          }
-        });
-        this.authService.updateChatUsers(updatedUsers);
-      });
+      this.authService.updateChatUsers(message);
     });
   }
 }

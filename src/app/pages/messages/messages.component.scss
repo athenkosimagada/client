@@ -25,16 +25,39 @@ $red-clr-600: #b10202;
 
 .messages-page {
     display: flex;
-    border: 1px solid $red-clr-100;
+    gap: 0.09rem;
+    background-color: rgba($red-clr-400, 0.1);
     margin-top: 2rem;
+    padding: 0.5rem;
+    border-radius: 12px;
 }
 
 .user-room {
     flex: 0.3;
     min-width: 250px;
+    background-color: rgba($dark-clr-400, 0.2);
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    padding: 0.5rem;
+    
 
     h3 {
         padding-left: 1rem;
+        font-size: 1.8em;
+    }
+
+    .search {
+        border: none;
+        outline: none;
+
+        padding: 1rem;
+        margin-top: 2rem;
+        width: 100%;
+        border-radius: 100px;
+        border: 1px solid $grey-clr-400;
+        background-color: transparent;
+        font-size: 1em;
+        color: $grey-clr-400;
     }
 
     .chat-users {
@@ -56,7 +79,7 @@ $red-clr-600: #b10202;
         }
 
         .chat-user:hover {
-            background-color: $grey-clr-100;
+            background-color: rgba($red-clr-200, 0.2);
         }
 
         .chat-user .user-details {
@@ -78,6 +101,7 @@ $red-clr-600: #b10202;
             width: 70px;
             height: 70px;
             border: 1px solid transparent;
+            border: 1px solid $grey-clr-400;
 
             display: flex;
             justify-content: center;
@@ -91,8 +115,7 @@ $red-clr-600: #b10202;
 
 .chat-room {
     flex: 0.7;
-    height: 800px;
-    border-left: 1px solid $red-clr-100;
+    height: 80vh;
 
     .start-chat{
         height: 100%;
@@ -107,7 +130,9 @@ $red-clr-600: #b10202;
 
         .chat-header {
             padding: 1rem 3.875rem;
-            border-bottom: 1px solid $red-clr-100;
+            background-color: rgba($dark-clr-400, 0.2);
+            border-top-right-radius: 12px;
+            border-bottom:  2px solid rgba($dark-clr-400, 0.1);
         }
 
         .chat-body {
@@ -133,7 +158,8 @@ $red-clr-600: #b10202;
                 gap: 1rem;
                 border-radius: 8px;
                 padding: 1rem;
-                background-color: $grey-clr-200;
+                background-color: rgba($dark-clr-400, 0.1);
+                box-shadow: 1px 1px 0px 1px rgba($dark-clr-400, 0.1);
             }
 
             .message-right {
@@ -145,7 +171,8 @@ $red-clr-600: #b10202;
                 gap: 1rem;
                 border-radius: 8px;
                 padding: 1rem;
-                background-color: $red-clr-100;
+                background-color: rgba($red-clr-400, 0.1);
+                box-shadow: 1px 1px 0px 1px rgba($dark-clr-400, 0.1);
             }
         }
 

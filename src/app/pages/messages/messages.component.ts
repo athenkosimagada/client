@@ -59,10 +59,6 @@ export class MessagesComponent implements OnInit, AfterViewInit, AfterViewChecke
   ngAfterViewInit(): void {
     this.signalrService.startConnection();
 
-    if (!this.id) {
-      this.initializeForm();
-    }
-
     this.activatedRoute.params.subscribe(params => {
       this.id = params['id'];
       
@@ -143,18 +139,9 @@ export class MessagesComponent implements OnInit, AfterViewInit, AfterViewChecke
     this.messageService.addMessage(this.form.value).subscribe({
       next: (res) => {
         if (res.isSuccess) {
-          const userIndex = this.users.findIndex(user => user.id === this.form.value.fromUserId);
-
-          if (userIndex !== -1) {
-            this.users[userIndex].latestMessage = this.form.value;
-          }
-
-          this.authService.users$.subscribe(users => {
-            this.users = users;
-          });
-
-          this.signalrService.sendMessage(this.form.value);
-          this.form.reset();
+          this.authService.updateChatUsers(res.result);
+          this.signalrService.sendMessage(res.result);
+          this.initializeForm();
         } else {
           this.toastr.error(res.message);
         }
