@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map, take } from 'rxjs';
+import { BehaviorSubject, Observable, map, of, take } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
@@ -19,7 +19,10 @@ export class AuthService {
   JWT_TOKEN:string = "JWT_TOKEN";
 
   private usersSubject = new BehaviorSubject<ApplicationUser[]>([]);
-  users$ = this.usersSubject.asObservable();
+  users$: Observable<ApplicationUser[]> = this.usersSubject.asObservable();
+
+  private selectedUserSubject = new BehaviorSubject<ApplicationUser | null>(null);
+  selectedUser$: Observable<ApplicationUser | null> = this.selectedUserSubject.asObservable();
 
   constructor(
     private http:HttpClient,
@@ -66,13 +69,30 @@ export class AuthService {
     )
   }
 
-  getChatUsers(userId: string):Observable<ApplicationUser[]>{
-    return this.http.get<ApiResponse<ApplicationUser[]>>(`${this.apiUrl}/GetChatUsers/${userId}`)
+  getChatUsers(userId: string):Observable<void>{
+    if (!userId) {
+      return of();
+    }
+    
+   return this.http.get<ApiResponse<ApplicationUser[]>>(`${this.apiUrl}/GetChatUsers/${userId}`)
     .pipe(
       map((response) => {
-        console.log(response.result);
-        this.usersSubject.next(response.result);
-        return response.result || [];
+        const users = response.result || []; 
+        users.sort((a, b) => {
+          const dateA = new Date(a.latestMessage?.sentOn);
+          const dateB = new Date(b.latestMessage?.sentOn);
+
+          if (dateA < dateB) {
+            return 1;
+          } else if (dateA > dateB) {
+            return -1;
+          }
+
+          return new Date(b.latestMessage?.sentOn).getTime() -
+                 new Date(a.latestMessage?.sentOn).getTime();
+        });
+
+        this.usersSubject.next(users);
       })
     )
   }
@@ -80,13 +100,28 @@ export class AuthService {
   updateChatUsers(message: Message): void {
     this.users$.pipe(take(1)).subscribe(users => {
       const updatedUsers = users.map(user => {
-        if (user.id === message.fromUserId || user.id == message.toUserId) {
+        if (user.id === message.toUserId && 
+              message.fromUserId == this.getUserDetails()?.id || 
+              user.id == message.fromUserId && 
+              message.toUserId == this.getUserDetails()?.id) {
           return {
             ...user,
             latestMessage: message
           };
         }
         return user;
+      }).sort((a, b) => {
+        const dateA = new Date(a.latestMessage?.sentOn);
+          const dateB = new Date(b.latestMessage?.sentOn);
+
+          if (dateA < dateB) {
+            return 1;
+          } else if (dateA > dateB) {
+            return -1;
+          }
+
+          return new Date(b.latestMessage?.sentOn).getTime() -
+                 new Date(a.latestMessage?.sentOn).getTime();
       });
       this.usersSubject.next(updatedUsers);
     });
@@ -114,6 +149,20 @@ export class AuthService {
     }
 
     return userDetails;
+  }
+
+  setSelectedUser(userId: string | null) {
+    if (!userId) {
+      return;
+    }
+  
+    this.getUserById(userId).subscribe({
+      next: user => this.selectedUserSubject.next(user),
+      error: err => {
+        console.error('Error fetching user:', err);
+        this.selectedUserSubject.next({ id: '', userName: '', fullName: '', email: '', phoneNumber: '' });
+      }
+    });
   }
 
   isLoggedIn = ():boolean => {

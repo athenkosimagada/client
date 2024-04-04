@@ -21,6 +21,9 @@ $red-clr-400: #f00000;
 $red-clr-500: #cd0000;
 $red-clr-600: #b10202;
 
+body {
+    font-family: monospace;
+}
 
 // Resets
 *,*::after,*::before {

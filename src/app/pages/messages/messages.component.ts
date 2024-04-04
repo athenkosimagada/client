@@ -5,10 +5,11 @@ import { ToastrService } from 'ngx-toastr';
 import { MessageService } from '../../services/message.service';
 import { MessageRequest } from '../../models/message-request';
 import { Message } from '../../models/message';
-import { DatePipe } from '@angular/common';
+import { AsyncPipe, CommonModule, DatePipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SignalrService } from '../../services/signalr.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Observable, filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-messages',
@@ -16,15 +17,17 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
   imports: [
     DatePipe,
     ReactiveFormsModule,
-    RouterLink
+    RouterLink,
+    AsyncPipe,
+    CommonModule
   ],
   templateUrl: './messages.component.html',
   styleUrl: './messages.component.scss'
 })
 export class MessagesComponent implements OnInit, AfterViewInit, AfterViewChecked {
-  users: ApplicationUser[] = [];
+  users$!: Observable<ApplicationUser[]>;
+  selectedUser$!: Observable<ApplicationUser | null>;
   messages: Message[] = [];
-  selectedUser: string = '';
   form!: FormGroup;
   id: string | null = '';
 
@@ -37,23 +40,25 @@ export class MessagesComponent implements OnInit, AfterViewInit, AfterViewChecke
     private messageService: MessageService,
     private signalrService: SignalrService,
     private activatedRoute: ActivatedRoute
-  ) {}
+  ) {
+    this.users$ = this.authService.users$;
+    this.selectedUser$ = this.authService.selectedUser$.pipe(
+      map(user => {
+        console.log(user);
+
+        return user  || 
+        { id: '', 
+        userName: '', 
+        fullName: '', 
+        email: '', 
+        phoneNumber: '' 
+      }
+      })
+    );
+  }
 
   ngOnInit(): void {
-    this.authService.getChatUsers(this.getUserDetails()?.id).subscribe({
-      next: (users) => {
-        if (users) {
-          this.authService.users$.subscribe(users => {
-            this.users = users;
-          });
-        } else {
-          // Handle case where user with the ID is not found (optional)
-        }
-      },
-      error: (err) => {
-        this.toastr.error(err.error.message);
-      }
-    });
+    this.authService.getChatUsers(this.getUserDetails()?.id).subscribe();
   }
 
   ngAfterViewInit(): void {
@@ -68,6 +73,7 @@ export class MessagesComponent implements OnInit, AfterViewInit, AfterViewChecke
         this.authService.getUserById(this.id).subscribe({
           next: (user) => {
             if (user) {
+              this.authService.setSelectedUser(user.id);
               this.getMessages(user);
               this.messageService.messages$.subscribe(messages => {
                 this.messages = messages;
@@ -82,7 +88,7 @@ export class MessagesComponent implements OnInit, AfterViewInit, AfterViewChecke
         });
       } else {
         this.messages = [];
-        this.selectedUser = '';
+        this.authService.setSelectedUser('');
       }
     });
 
@@ -114,7 +120,6 @@ export class MessagesComponent implements OnInit, AfterViewInit, AfterViewChecke
       return;
     }
 
-    this.selectedUser = user.fullName;
     const messageRequest: MessageRequest = {
       fromUserId: this.getUserDetails()?.id,
       toUserId: user.id

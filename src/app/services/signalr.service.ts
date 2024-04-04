@@ -14,8 +14,7 @@ export class SignalrService {
 
   constructor(
     private authService : AuthService,
-    private messageService : MessageService,
-    private authServce : AuthService
+    private messageService : MessageService
   ) { }
 
   startConnection():void {
@@ -23,7 +22,9 @@ export class SignalrService {
     .withUrl(this.SIGNALR_URL, {
       skipNegotiation : true,
       transport: signalR.HttpTransportType.WebSockets
-    }).build();
+    })
+    .withAutomaticReconnect()
+    .build();
 
     this.connection
     .start()
@@ -57,25 +58,51 @@ export class SignalrService {
       console.log(signalrConnectionId);
     });
   }
+  async sendMessage(message: Message): Promise<void> {
+    try {
+        await this.ensureConnection();
+        this.messageService.addMessage(message);
+        await this.connection.invoke("SendMessage", message, message.toUserId);
+        console.log("Message sent");
+    } catch (error) {
+        console.error("Error sending message:", error);
+    }
+  }
+  
+  async ensureConnection(): Promise<void> {
+      if (this.connection.state !== signalR.HubConnectionState.Connected) {
+          await this.reconnect();
+      }
+  } 
 
-  
-  sendMessage(message: Message): void {
-    console.log("Send Message Called");
-  
-    if (this.connection.state 
-      !== signalR.HubConnectionState.Connected) {
-      this.startConnection()
+  async reconnect(maxRetries = 5, currentRetry = 0) {
+    if (!this.authService.isLoggedIn()) {
+      console.log('User is logging out, skipping reconnection');
+      return;
     }
 
-    this.messageService.addMessage(message);
-      this.connection.invoke("SendMessage", message, message.toUserId).then(() => {
-        console.log("Message sent");
-      })
-      .catch(err => console.log(err));
-  }  
+    if (currentRetry >= maxRetries) {
+      console.error('Failed to reconnect after', maxRetries, 'attempts');
+      return;
+    }
+  
+    const delay = Math.pow(2, currentRetry) * 1000;
+    console.log(`Reconnecting in ${delay} ms... (attempt ${currentRetry + 1}/${maxRetries})`);
+  
+    try {
+      await this.connection.start();
+      console.log('Reconnected successfully');
+      this.onLoggedIn();
+      this.recieveMessage();
+    } catch (error) {
+      console.error('Reconnection failed:', error);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      this.reconnect(maxRetries, currentRetry + 1);
+    }
+  }
 
   recieveMessage():void {
-    this.connection.on("RecieveMessage",(message : Message) => {
+    this.connection.on("ReceiveMessage",(message : Message) => {
       console.log(`Message received \n Message: ${message}`);
       this.messageService.receiveMessage(message);
       this.authService.updateChatUsers(message);

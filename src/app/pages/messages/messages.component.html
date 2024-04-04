@@ -4,7 +4,7 @@
       <h3>Messages</h3>
       <input class="search" type="search" placeholder="Search for user" />
       <div class="chat-users">
-        @for (user of users; track user.id) { @if (user.id !=
+        @for (user of users$ | async; track user.id) { @if (user.id !=
         getUserDetails()?.id && user.latestMessage != null) {
         <div [routerLink]="['/cb/messages',user.id]" class="chat-user">
           <div class="user">
@@ -22,7 +22,12 @@
       @if (messages.length > 0) {
       <div class="chat">
         <div class="chat-header">
-          <h2>To: {{ selectedUser }}</h2>
+          <h2 *ngIf="(selectedUser$ | async) as user; else noUserSelected">
+            To: {{ user?.fullName || user.userName || 'User' }}
+          </h2>
+          <ng-template #noUserSelected>
+            Select a user to start a chat
+          </ng-template>
         </div>
         <div class="chat-body" #chatBody>
           @for (message of messages; track message.messageId) { @if
